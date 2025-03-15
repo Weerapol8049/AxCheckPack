@@ -1,0 +1,409 @@
+﻿using AxCheckPack.Report;
+using DevExpress.XtraEditors;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Media;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace AxCheckPack
+{
+    public partial class FormSmartPack : XtraForm
+    {
+        string STMLOTIDSTM = "";
+        string RoomCategory = "ห้องครัว";
+        SoundPlayer sp = new SoundPlayer(Properties.Resources.beep11);
+        SoundPlayer spError = new SoundPlayer(Properties.Resources.Alarme);
+
+        public FormSmartPack()
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        public void ShowDialog(string RoomCategory)
+        {
+            this.RoomCategory = RoomCategory;
+            this.Text += " " + RoomCategory;
+            this.ShowDialog();
+        }
+
+        private void FormSmartPack_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+                gridViewAll.BestFitColumns();
+                rdPack.Properties.Items.Clear();
+                FormNoLot.RefreshFormText(this);
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            txtScan.Focus();
+        }
+
+        private void toggleSwitch1_Toggled(object sender, EventArgs e)
+        {
+            timer1.Enabled = toggleSwitch1.IsOn;
+        }
+
+        private void gridViewAll_RowCountChanged(object sender, EventArgs e)
+        {
+            txtTotal.Text = gridViewAll.RowCount.ToString("#,##0");
+        }
+
+        private void txtScan_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                sp.Play();
+                string barcode = txtScan.Text.Trim();
+                txtScan.Text = string.Empty;
+                if (barcode == "") return;
+
+                try
+                {
+                    STM.SplashScreenManagerManual_Show();
+                    gridViewAll.PostEditor();
+                    if (gridControlAll.DataSource == null || gridViewAll.RowCount == 0)
+                    {
+                        string sql = string.Format(@"   
+                                                        SELECT PRODUCTARTICLE,PARTNAME,[CODEPART],CODEPACK,[CUTRITEMATERIALCODE],FINISHLENGTH,FINISHWIDTH,RECID,0 as Receive,'' as PACKQUANTITYSEQUENCETOTAL,CONVERT(varchar,RECID) as ID,'0' as ParentID,STMLOTIDSTM,CODEPACKORG
+                                                        FROM [dbo].[STMSMARTPDPARTSTM]
+                                                        where CODEPACK in (select distinct CODEPACK from dbo.STMSMARTPDPARTSTM where CODEPART='{0}') ", barcode);
+                        DataTable dt = STM.QueryData(sql);
+                        gridControlAll.DataSource = dt;
+                        gridViewAll.BestFitColumns();
+
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            STMLOTIDSTM = dt.Rows[0]["STMLOTIDSTM"].ToString();
+                        }
+
+                        if (treeList1.DataSource == null)
+                        {
+                            DataTable dtTree = dt.Clone();
+                            treeList1.DataSource = dtTree;
+                        }
+                    }
+
+                    var p = from r in (gridControlAll.DataSource as DataTable).AsEnumerable()
+                            where r["CODEPART"].ToString() == barcode
+                            select r;
+                    if (p.Count() == 0)
+                    {
+
+                        notifyIcon1.BalloonTipText = string.Format(" ไม่พบข้อมูล Code Part '{0}' ", barcode);
+                        notifyIcon1.Visible = true;
+                        notifyIcon1.ShowBalloonTip(5000);
+
+
+                        spError.Play();
+
+                        //STM.MessageBoxError("ไม่พบบาร์โคด " + barcode + "");
+                    }
+                    else
+                    {
+                        DataTable dtTree = treeList1.DataSource as DataTable;
+
+                        string pack = "0";
+                        if (rdPack.Properties.Items.Count == 0 || rdPack.EditValue == null)
+                        {
+                            rdPack.Properties.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem("1", "Pack 1"));
+                            pack = "1";
+                            rdPack.EditValue = "1";
+
+                            DataRow row = dtTree.NewRow();
+                            row["PRODUCTARTICLE"] = "Pack 1";
+                            row["PARTNAME"] = "";
+                            row["CODEPART"] = "";
+                            row["CODEPACK"] = "";
+                            row["CUTRITEMATERIALCODE"] = "";
+                            row["FINISHLENGTH"] = 0;
+                            row["FINISHWIDTH"] = 0;
+                            row["RECID"] = 0;
+                            row["Receive"] = 0;
+                            row["PACKQUANTITYSEQUENCETOTAL"] = "";
+                            row["ID"] = pack;
+                            row["ParentID"] = "0";
+                            dtTree.Rows.Add(row);
+                        }
+                        else
+                        {
+                            pack = rdPack.EditValue.ToString();
+                        }
+
+                        foreach (DataRow row in p.ToArray())
+                        {
+                            if (Convert.ToInt32(row["Receive"]) == 0)
+                            {
+                                row["PACKQUANTITYSEQUENCETOTAL"] = pack;
+                                row["ParentID"] = pack;
+                                row["Receive"] = 1;
+
+                                dtTree.ImportRow(row);
+                            }
+                        }
+
+                        treeList1.ExpandAll();
+                        gridViewAll.PostEditor();
+
+                        if (gridControlAll.DataSource != null)
+                        {
+                            DataTable dtPackComplete = gridControlAll.DataSource as DataTable;
+                            var pack_complete = from r in dtPackComplete.AsEnumerable()
+                                                where Convert.ToInt32(r["Receive"]) == 0
+                                                select r;
+                            if (pack_complete.Count() == 0)
+                            {
+                                var PackSeqDistincts = (from r in dtPackComplete.AsEnumerable()
+                                                        group r by Convert.ToInt32(r["PACKQUANTITYSEQUENCETOTAL"] == DBNull.Value || r["PACKQUANTITYSEQUENCETOTAL"].ToString()=="" ? "0" : r["PACKQUANTITYSEQUENCETOTAL"]) into g
+                                                        select new
+                                                        {
+                                                            PACKQUANTITYSEQUENCETOTAL = g.Key,
+                                                            Count = g.Count()
+                                                        }
+                                                        ).OrderBy(r => r.PACKQUANTITYSEQUENCETOTAL);
+                                int index = 0;
+                                foreach (var PackSeqDistinct in PackSeqDistincts)
+                                {
+                                    if (PackSeqDistinct.Count > 0)
+                                    {
+                                        Console.WriteLine(PackSeqDistinct.PACKQUANTITYSEQUENCETOTAL);
+                                        index++;
+                                        var RunSeq = from r in dtPackComplete.AsEnumerable()
+                                                     where Convert.ToInt32(r["PACKQUANTITYSEQUENCETOTAL"]) == Convert.ToInt32(PackSeqDistinct.PACKQUANTITYSEQUENCETOTAL)
+                                                     select r;
+                                        foreach (DataRow row in RunSeq.ToArray())
+                                        {
+                                            row["PACKQUANTITYSEQUENCETOTAL"] = index.ToString();
+                                        }
+                                    }
+                                }
+
+                                SqlConnection con = new SqlConnection(STM.ConnectionString);
+                                SqlCommand cmd = new SqlCommand();
+                                List<string> lsCodePack = new List<string>();
+
+                                try
+                                {
+                                    con.Open();
+                                    cmd.Connection = con;
+
+                                    DateTime CHECKPACKDATE = new DateTime();
+                                    string CHECKPACKUSER = STM.GetLoginName;
+
+                                    cmd.CommandText = "select getdate() ";
+                                    cmd.Parameters.Clear();
+                                    CHECKPACKDATE = Convert.ToDateTime(cmd.ExecuteScalar());
+
+                                    foreach (DataRow row in dtPackComplete.Rows)
+                                    {
+                                        string CodePack = row["CODEPACK"].ToString();
+
+                                        if (row["CODEPACKORG"].ToString().Trim() == "")
+                                        {
+                                            CodePack = CodePack.Length >= 19 ? CodePack.Substring(0, 19) : CodePack;
+                                            CodePack = CodePack + "_" + row["PACKQUANTITYSEQUENCETOTAL"].ToString();
+                                            lsCodePack.Add(CodePack);
+                                        }
+                                        else
+                                        {
+                                            CodePack = row["CODEPACKORG"].ToString();
+                                            CodePack = CodePack + "_" + row["PACKQUANTITYSEQUENCETOTAL"].ToString();
+                                            lsCodePack.Add(CodePack);
+                                        }
+
+                                        cmd.CommandText = @"update [dbo].[STMSMARTPDPARTSTM]
+                                                            set [PACKQUANTITYSEQUENCE]=@PACKQUANTITYSEQUENCETOTAL,
+                                                                CODEPACK=@CODEPACK,
+                                                                CHECKPACK=1,
+                                                                CHECKPACKDATE=@CHECKPACKDATE,
+                                                                CHECKPACKUSER=@CHECKPACKUSER
+                                                            where RECID=@RECID ";
+                                        cmd.Parameters.Clear();
+                                        cmd.Parameters.Add(new SqlParameter("PACKQUANTITYSEQUENCETOTAL", row["PACKQUANTITYSEQUENCETOTAL"].ToString() + "/" + index.ToString()));
+                                        cmd.Parameters.Add(new SqlParameter("CODEPACK", CodePack));
+                                        cmd.Parameters.Add(new SqlParameter("RECID", row["RECID"]));
+                                        cmd.Parameters.Add(new SqlParameter("CHECKPACKDATE", CHECKPACKDATE));
+                                        cmd.Parameters.Add(new SqlParameter("CHECKPACKUSER", CHECKPACKUSER));
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    STM.MessageBoxError(ex);
+                                }
+                                finally
+                                {
+                                    con.Close();
+                                }
+
+                                PrintReport(lsCodePack);
+
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    STM.MessageBoxError(ex);
+                }
+                finally
+                {
+                    STM.SplashScreenManagerManual_Hide();
+                }
+
+            }
+        }
+
+        private void simpleButton2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+                if (STM.MessageBoxConfirm("Confirm Clear")) return;
+
+                rdPack.Properties.Items.Clear();
+                gridControlAll.DataSource = null;
+                treeList1.DataSource = null;
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void simpleButton1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+                int max = 0;
+
+                if (rdPack.Properties.Items.Count == 0)
+                {
+                    max = 1;
+                }
+                else
+                {
+                    var m = from r in rdPack.Properties.Items
+                            select new { Value = Convert.ToInt32(r.Value) };
+                    if (m.Count() > 0)
+                    {
+                        max = m.Max(r => r.Value) + 1;
+                    }
+                }
+
+                rdPack.Properties.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem(max.ToString(), "Pack " + max.ToString()));
+                rdPack.EditValue = max.ToString();
+
+                if (treeList1.DataSource == null)
+                {
+                    string sql = string.Format(@"   SELECT PRODUCTARTICLE,PARTNAME,[CODEPART],CODEPACK,[CUTRITEMATERIALCODE],FINISHLENGTH,FINISHWIDTH,RECID,0 as Receive,ISNULL(PACKQUANTITYSEQUENCE,'1/1') as PACKQUANTITYSEQUENCETOTAL,CONVERT(varchar,RECID) as ID,'0' as ParentID
+                                                    FROM [dbo].[STMSMARTPDPARTSTM]
+                                                    where 1=2  ");
+                    DataTable dt = STM.QueryData(sql);
+                    treeList1.DataSource = dt.Clone();
+                }
+
+
+                DataTable dtTree = treeList1.DataSource as DataTable;
+
+                DataRow row = dtTree.NewRow();
+                row["PRODUCTARTICLE"] = "Pack " + max.ToString();
+                row["PARTNAME"] = "";
+                row["CODEPART"] = "";
+                row["CODEPACK"] = "";
+                row["CUTRITEMATERIALCODE"] = "";
+                row["FINISHLENGTH"] = 0;
+                row["FINISHWIDTH"] = 0;
+                row["RECID"] = 0;
+                row["Receive"] = 0;
+                row["PACKQUANTITYSEQUENCETOTAL"] = "";
+                row["ID"] = max.ToString();
+                row["ParentID"] = "0";
+                dtTree.Rows.Add(row);
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void PrintReport(List<string> lsCodePack)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+
+                var p = (from r in lsCodePack
+                         select r).Distinct().OrderBy(r => r);
+
+                FormFull frm = new FormFull();
+
+                foreach (string CodePack in p.ToArray())
+                {
+                    frm.ShowDialog(STMLOTIDSTM, CodePack, RoomCategory, PrintType.Full, DateTime.Now);
+                    if (RoomCategory == "Compack" || RoomCategory == "DIY")//wk#.n 20220526
+                    {
+                        if (RoomCategory == "Compack")
+                            frm.ShowDialog(STMLOTIDSTM, CodePack, RoomCategory, PrintType.Compack, DateTime.Now);//wk#.n 20220526
+                        else if (RoomCategory == "DIY")
+                            frm.ShowDialog(STMLOTIDSTM, CodePack, RoomCategory, PrintType.DIY, DateTime.Now);//wk#.n 20220526
+                    }
+                    else
+                        frm.ShowDialog(STMLOTIDSTM, CodePack, RoomCategory, PrintType.Label, DateTime.Now);
+                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+    }
+}

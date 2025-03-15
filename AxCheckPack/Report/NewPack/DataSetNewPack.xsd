@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataSetNewPack" targetNamespace="http://tempuri.org/DataSetNewPack.xsd" xmlns:mstns="http://tempuri.org/DataSetNewPack.xsd" xmlns="http://tempuri.org/DataSetNewPack.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataSetNewPack" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSetNewPack" msprop:Generator_UserDSName="DataSetNewPack">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="dtNewPack" msprop:Generator_TableClassName="dtNewPackDataTable" msprop:Generator_TableVarName="tabledtNewPack" msprop:Generator_TablePropName="dtNewPack" msprop:Generator_RowDeletingName="dtNewPackRowDeleting" msprop:Generator_RowChangingName="dtNewPackRowChanging" msprop:Generator_RowEvHandlerName="dtNewPackRowChangeEventHandler" msprop:Generator_RowDeletedName="dtNewPackRowDeleted" msprop:Generator_UserTableName="dtNewPack" msprop:Generator_RowChangedName="dtNewPackRowChanged" msprop:Generator_RowEvArgName="dtNewPackRowChangeEvent" msprop:Generator_RowClassName="dtNewPackRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BarcodeIncrease" msprop:Generator_ColumnVarNameInTable="columnBarcodeIncrease" msprop:Generator_ColumnPropNameInRow="BarcodeIncrease" msprop:Generator_ColumnPropNameInTable="BarcodeIncreaseColumn" msprop:Generator_UserColumnName="BarcodeIncrease" type="xs:base64Binary" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,628 @@
+﻿using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors;
+using DevExpress.XtraGrid.Views.Grid;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Media;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace AxCheckPack
+{
+    public partial class FormNoLot : XtraForm
+    {
+        public FormNoLot()
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        SoundPlayer sp = new SoundPlayer(Properties.Resources.beep11);
+        SoundPlayer spError = new SoundPlayer(Properties.Resources.Alarme);
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+
+                dateEditProduction.EditValue = DateTime.Now;
+                UpdateDashboard();
+                RefreshFormText(this);
+
+                gridView1.BestFitColumns();
+                gridView3.BestFitColumns();
+
+                PrinterSetting printsetting = STM.Print;
+                DataTable dtRoomCategory = STM.QueryData(@"select NAME from dbo.STMROOMCATEGORY order by SEQ ");
+
+                rdRoomCategory.Properties.DataSource = dtRoomCategory;
+
+                if (printsetting.PrintFull == "" && printsetting.PrintLabel == "")
+                {
+                    STM.MessageBoxError(" กรุณา set เครื่องปริ้น PrinterFull และ PrinterLabel");
+                }
+
+                DataTable dtConfig = STM.QueryDataProductEngineering(string.Format(@"SELECT [ComputerName],[Category]
+                                                                                    FROM [dbo].[AxCheckPackConfig]
+                                                                                    where computername='{0}' ", STM.GetComputerName));
+                if (dtConfig != null && dtConfig.Rows.Count > 0)
+                {
+                    rdRoomCategory.EditValue = dtConfig.Rows[0]["Category"].ToString() == "" ? "ห้องครัว" : dtConfig.Rows[0]["Category"].ToString();
+                }
+                else
+                {
+                    rdRoomCategory.EditValue = "ห้องครัว";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                toggleSwitch1.IsOn = false;
+
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        public static void RefreshFormText(Form frm)
+        {
+            string msg = "Check Pack";
+            SqlConnection con = new SqlConnection(STM.ConnectionString);
+            con.Open();
+
+            if (con.Database.Trim() != "")
+            {
+                msg += " , DataBase => " + con.Database;
+            }
+
+            PrinterSetting printsetting = STM.Print;
+
+            if (printsetting.PrintFull.Trim() != "")
+            {
+                msg += " , Full => " + printsetting.PrintFull;
+            }
+            if (printsetting.PrintLabel.Trim() != "")
+            {
+                msg += " , Lable => " + printsetting.PrintLabel;
+            }
+            con.Close();
+
+            frm.Text = msg;
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            txtScan.Focus();
+        }
+        private void btPrintFull_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+                if (gridControl1.DataSource == null) return;
+
+                DataTable dt = gridControl1.DataSource as DataTable;
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    DataRow row = dt.Rows[0];
+                    string STMLOTIDSTM = row["STMLOTIDSTM"].ToString();
+                    string CODEPACK = row["CODEPACK"].ToString();
+
+                    DateTime ProductionDate = dateEditProduction.EditValue == null ? DateTime.Now : Convert.ToDateTime(dateEditProduction.EditValue);
+                    Report.FormFull frm = new Report.FormFull();
+                    frm.ShowDialog(STMLOTIDSTM, CODEPACK, rdRoomCategory.EditValue.ToString(), PrintType.Full, ProductionDate);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+        private void btPrintLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btClear_Click(object sender, EventArgs e)
+        {
+            if (STM.MessageBoxConfirm("ต้องการล้างข้อมูล ใช่หรือไม่ ")) return;
+
+            txtComplete.Text = "";
+            gridControl1.DataSource = null;
+            gridControl3.DataSource = null;
+        }
+        private void toggleSwitch1_Toggled(object sender, EventArgs e)
+        {
+            timer1.Enabled = toggleSwitch1.IsOn;
+        }
+        private void glLot_EditValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                //STM.SplashScreenManagerManual_Show();
+
+                //if (glLot.EditValue == null) return;
+
+                //LoadPack();
+            }
+            catch (Exception ex)
+            {
+                toggleSwitch1.IsOn = false;
+
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void gridView1_RowCountChanged(object sender, EventArgs e)
+        {
+            txtTotal.Text = gridView1.RowCount.ToString("#,##0");
+        }
+        private void gridView3_RowCountChanged(object sender, EventArgs e)
+        {
+            txtPackTotal.Text = gridView3.RowCount.ToString("#,##0");
+        }
+
+        private void txtScan_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                sp.Play();
+                string barcode = txtScan.Text.Trim();
+                txtScan.Text = string.Empty;
+                if (barcode == "") return;
+
+                SqlConnection con = new SqlConnection(STM.ConnectionString);
+                SqlCommand cmd = new SqlCommand();
+                SqlDataAdapter ad = new SqlDataAdapter();
+
+                try
+                {
+                    STM.SplashScreenManagerManual_Show();
+
+                    con.Open();
+                    cmd.Connection = con;
+
+                    if (gridControl1.DataSource == null || gridView1.RowCount == 0)
+                    {
+                        string sql = string.Format(@"
+                                    select STMLOTIDSTM, OrderNumber,RECID, BARCODE, PRODUCTARTICLE, PARTNAME, CODEPART, FINISHLENGTH, FINISHWIDTH, CODEPACK, SHELFNO, CHECKPART,CHECKPACK, CHECKPACKDATE, CHECKPACKUSER, ITEMID
+                                    from [dbo].[STMSMARTPDPARTSTM]
+                                    where  CODEPACK in (select CODEPACK from dbo.STMSMARTPDPARTSTM where CODEPART='{0}')
+                                    order by PRODUCTARTICLE,PARTNAME,FINISHLENGTH,FINISHWIDTH ", barcode);
+
+                        DataTable dtCodePack = new DataTable();
+                        cmd.CommandText = sql;
+                        ad.SelectCommand = cmd;
+                        ad.Fill(dtCodePack);
+
+                        gridControl1.DataSource = dtCodePack;
+                        gridView1.BestFitColumns();
+
+                        RefreshPack();
+                    }
+
+                    if (gridControl1.DataSource != null)
+                    {
+                        var pack = from r in (gridControl1.DataSource as DataTable).AsEnumerable()
+                                   where r["CODEPART"].ToString() == barcode
+                                   select r;
+                        if (pack.Count() == 0)
+                        {
+                            //STM.MessageBoxError(string.Format(" ไม่พบข้อมูล Code Part '{0}' ", barcode));
+
+                            notifyIcon1.BalloonTipText = string.Format(" ไม่พบข้อมูล Code Part '{0}' ", barcode);
+                            notifyIcon1.ShowBalloonTip(5000);
+
+                            spError.Play();
+
+                        }
+                        else
+                        {
+                            foreach (DataRow row in pack.ToArray())
+                            {
+                                //if (Convert.ToInt32(row["CHECKPART"]) == 1)
+                                {
+                                    if (Convert.ToInt32(row["CHECKPACK"]) == 0)
+                                    {
+                                        row["CHECKPACK"] = 1;
+
+                                        cmd.CommandText = @" UPDATE [dbo].[STMSMARTPDPARTSTM]
+                                                            SET [CHECKPACKUSER] = @CHECKPACKUSER
+                                                                ,[CHECKPACKDATE] = GETDATE()
+                                                                ,[CHECKPACK] = 1
+                                                            WHERE  RECID=@RECID ";
+                                        cmd.Parameters.Clear();
+                                        cmd.Parameters.Add(new SqlParameter("RECID", row["RECID"]));
+                                        cmd.Parameters.Add(new SqlParameter("CHECKPACKUSER", STM.GetLoginName));
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                                //else
+                                //{
+                                //    STM.MessageBoxError(string.Format(" Barcode {0} ยังไม่ผ่าน Check Part ", barcode));
+                                //}
+                            }
+
+                            UpdateComplete();
+
+                            var complate = from r in (gridControl1.DataSource as DataTable).AsEnumerable()
+                                           where Convert.ToInt32(r["CHECKPACK"]) == 0
+                                           select r;
+
+                            if (complate.Count() == 0)
+                            {
+
+                                DataTable dt = gridControl1.DataSource as DataTable;
+
+                                RefreshPack();
+
+                                Report.FormFull frm = new Report.FormFull();
+                                DateTime ProductionDate = dateEditProduction.EditValue == null ? DateTime.Now : Convert.ToDateTime(dateEditProduction.EditValue);
+
+                                if (rdRoomCategory.EditValue.ToString() == "DIY")
+                                {
+                                    frm.ShowDialog(
+                                       dt.Rows[0]["STMLOTIDSTM"].ToString(),
+                                       dt.Rows[0]["CODEPACK"].ToString(),
+                                       rdRoomCategory.EditValue.ToString(),
+                                       PrintType.DIY,
+                                       ProductionDate);
+                                }
+                                else if (rdRoomCategory.EditValue.ToString() == "Compack")
+                                {
+                                    frm.ShowDialog(
+                                       dt.Rows[0]["STMLOTIDSTM"].ToString(),
+                                       dt.Rows[0]["CODEPACK"].ToString(),
+                                       rdRoomCategory.EditValue.ToString(),
+                                       PrintType.Compack,
+                                       ProductionDate);
+                                }
+                                else
+                                {
+                                    frm.ShowDialog(
+                                        dt.Rows[0]["STMLOTIDSTM"].ToString(),
+                                        dt.Rows[0]["CODEPACK"].ToString(),
+                                        rdRoomCategory.EditValue.ToString(),
+                                        PrintType.Full,
+                                        ProductionDate);
+
+                                    frm.ShowDialog(
+                                        dt.Rows[0]["STMLOTIDSTM"].ToString(),
+                                        dt.Rows[0]["CODEPACK"].ToString(),
+                                        rdRoomCategory.EditValue.ToString(),
+                                        PrintType.Label,
+                                        ProductionDate);
+                                }
+
+                                gridControl1.DataSource = null;
+                                txtComplete.Text = "";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //STM.MessageBoxError(string.Format(" ไม่พบข้อมูล OrderNumber '{0}' ", barcode));
+                        notifyIcon1.BalloonTipText = string.Format(" ไม่พบข้อมูล Code Part '{0}' ", barcode);
+                        notifyIcon1.ShowBalloonTip(5000);
+
+                        spError.Play();
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    STM.MessageBoxError(ex);
+                }
+                finally
+                {
+                    con.Close();
+                    STM.SplashScreenManagerManual_Hide();
+                }
+            }
+        }
+
+        private void UpdateComplete()
+        {
+
+            if (gridControl1.DataSource == null)
+            {
+                txtComplete.Text = "0";
+            }
+            else
+            {
+                var sum = from r in (gridControl1.DataSource as DataTable).AsEnumerable()
+                          where Convert.ToInt32(r["CHECKPACK"]) != 0
+                          group r["STMLOTIDSTM"].ToString() by new
+                          {
+                              STMLOTIDSTM = r["STMLOTIDSTM"].ToString(),
+                              CHECKPACK = Convert.ToInt32(r["CHECKPACK"])
+                          }
+                              into g
+                              select new
+                              {
+                                  STMLOTIDSTM = g.Key.STMLOTIDSTM,
+                                  CHECKPACK = g.Sum(x => g.Key.CHECKPACK)
+                              };
+                foreach (var r in sum)
+                {
+                    txtComplete.Text = r.CHECKPACK.ToString("#,##0");
+                }
+            }
+        }
+        private void RefreshPack()
+        {
+            string OrderNumber = "";
+            if (gridControl1.DataSource != null)
+            {
+                DataTable dt = gridControl1.DataSource as DataTable;
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    OrderNumber = dt.Rows[0]["OrderNumber"].ToString();
+                }
+            }
+            string sql = string.Format(@"declare @OrderNumber varchar(50)='{0}'
+
+                                        ;with a as (
+                                            SELECT distinct 
+                                                     [STMLOTIDSTM]
+                                                    ,OrderNumber
+                                                    ,[PRODUCTARTICLE]
+                                                    ,[CODEPACK]
+                                                    ,[SHELFNO]
+		                                            ,sum(checkpart) over(partition by STMLOTIDSTM,CODEPACK) as PartComplete
+	                                                ,sum(CHECKPACK) over(partition by STMLOTIDSTM,CODEPACK) as PackComplete
+	                                                ,COUNT(*) over(partition by STMLOTIDSTM,CODEPACK) as PartTotal
+                                            FROM [dbo].[STMSMARTPDPARTSTM]
+                                            where OrderNumber=@OrderNumber
+                                            ) 
+
+                                        select  STMLOTIDSTM,OrderNumber,PRODUCTARTICLE,CODEPACK,SHELFNO,PartComplete,PackComplete,PartTotal,
+		                                        case when PartComplete=PartTotal then 1 else 0 end as PartSuccess,
+		                                        case when PackComplete=PartTotal then 1 else 0 end as PackSuccess
+                                        from a
+                                        order by SHELFNO ", OrderNumber);
+
+            DataTable dt1 = STM.QueryData(sql);
+
+            gridControl3.DataSource = dt1;
+            gridView3.BestFitColumns();
+
+
+        }
+        private void UpdateDashboard()
+        {
+            SqlConnection con = new SqlConnection(STM.ConnectionStringProductEngineering);
+            SqlCommand cmd = new SqlCommand();
+
+            con.Open();
+            cmd.Connection = con;
+            cmd.CommandText = @"if exists (SELECT * FROM [dbo].[ViewDashboardComputer] where  [ComputerName]=@ComputerName)
+                                    begin
+	                                    delete FROM [dbo].[ViewDashboardComputer] where  [ComputerName]=@ComputerName
+                                    end
+
+                                    INSERT INTO [dbo].[ViewDashboardComputer]
+                                               ([ComputerName]
+                                               ,[Program]
+                                               ,[CreateDate])
+                                         VALUES
+                                               (@ComputerName
+                                               ,@Program
+                                               ,GETDATE()) ";
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("ComputerName", STM.GetComputerName));
+            cmd.Parameters.Add(new SqlParameter("Program", "AxCheckPack"));
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+        }
+
+        private void gridView3_PopupMenuShowing(object sender, DevExpress.XtraGrid.Views.Grid.PopupMenuShowingEventArgs e)
+        {
+            if (e.HitInfo.RowHandle < 0) return;
+
+            GridView view = sender as GridView;
+            if (e.MenuType == DevExpress.XtraGrid.Views.Grid.GridMenuType.Row)
+            {
+                int rowHandle = e.HitInfo.RowHandle;
+
+                e.Menu.Items.Clear();
+                e.Menu.Items.Add(CreateRowPrintFull(view, rowHandle));
+                e.Menu.Items.Add(CreateRowPrintLabel(view, rowHandle));
+                e.Menu.Items.Add(CreateRowViewPack(view, rowHandle));
+                e.Menu.Items.Add(CreateRowRefresh(view, rowHandle));
+            }
+        }
+        private DXMenuItem CreateRowPrintFull(GridView view, int rowHandle)
+        {
+            Image img2 = Image.FromStream(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AxCheckPack.image.Custom-Icon-Design-Pretty-Office-4-Report.ico"));
+            DXMenuItem menuItemFilterRow = new DXMenuItem("Report Full", new EventHandler(OnCreatePrintFull_Click), (Image)(new Bitmap(img2, new Size(16, 16))));
+            menuItemFilterRow.Tag = new RowInfo(view, rowHandle);
+            return menuItemFilterRow;
+        }
+        private void OnCreatePrintFull_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataRow row = gridView3.GetFocusedDataRow();
+                string STMLOTIDSTM = row["STMLOTIDSTM"].ToString();
+                string CODEPACK = row["CODEPACK"].ToString();
+                DateTime ProductionDate = dateEditProduction.EditValue == null ? DateTime.Now : Convert.ToDateTime(dateEditProduction.EditValue);
+                Report.FormFull frm = new Report.FormFull();
+                frm.ShowDialog(STMLOTIDSTM, CODEPACK, rdRoomCategory.EditValue.ToString(), PrintType.Full, ProductionDate);
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+        }
+
+        private DXMenuItem CreateRowPrintLabel(GridView view, int rowHandle)
+        {
+            Image img2 = Image.FromStream(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AxCheckPack.image.Custom-Icon-Design-Flatastic-5-Product-sale-report.ico"));
+            DXMenuItem menuItemFilterRow = new DXMenuItem("Report Label", new EventHandler(OnCreatePrintLabel_Click), (Image)(new Bitmap(img2, new Size(16, 16))));
+            menuItemFilterRow.Tag = new RowInfo(view, rowHandle);
+            return menuItemFilterRow;
+        }
+        private void OnCreatePrintLabel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataRow row = gridView3.GetFocusedDataRow();
+                DateTime ProductionDate = dateEditProduction.EditValue == null ? DateTime.Now : Convert.ToDateTime(dateEditProduction.EditValue);
+                string STMLOTIDSTM = row["STMLOTIDSTM"].ToString();
+                string CODEPACK = row["CODEPACK"].ToString();
+
+                Report.FormFull frm = new Report.FormFull();
+                frm.ShowDialog(STMLOTIDSTM, CODEPACK, rdRoomCategory.EditValue.ToString(), PrintType.Label, ProductionDate);
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+        }
+
+        private DXMenuItem CreateRowViewPack(GridView view, int rowHandle)
+        {
+            Image img2 = Image.FromStream(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AxCheckPack.image.view.ico"));
+            DXMenuItem menuItemFilterRow = new DXMenuItem("View Pack", new EventHandler(OnCreateViewPack_Click), (Image)(new Bitmap(img2, new Size(16, 16))));
+            menuItemFilterRow.Tag = new RowInfo(view, rowHandle);
+            return menuItemFilterRow;
+        }
+        private void OnCreateViewPack_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataRow row = gridView3.GetFocusedDataRow();
+                string STMLOTIDSTM = row["STMLOTIDSTM"].ToString();
+                string CODEPACK = row["CODEPACK"].ToString();
+
+                //Report.FormFull frm = new Report.FormFull();
+                //frm.ShowDialog(STMLOTIDSTM, CODEPACK, "label");
+
+                FormViewPack frm = new FormViewPack();
+                frm.ShowDialog(STMLOTIDSTM, CODEPACK);
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+        }
+
+        private DXMenuItem CreateRowRefresh(GridView view, int rowHandle)
+        {
+            Image img2 = Image.FromStream(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("AxCheckPack.image.Custom-Icon-Design-Pretty-Office-5-Refresh.ico"));
+            DXMenuItem menuItemFilterRow = new DXMenuItem("Refresh", new EventHandler(OnCreateViewRefresh_Click), (Image)(new Bitmap(img2, new Size(16, 16))));
+            menuItemFilterRow.Tag = new RowInfo(view, rowHandle);
+            return menuItemFilterRow;
+        }
+        private void OnCreateViewRefresh_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                RefreshPack();
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+        }
+
+        private void simpleButton1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FormPrintSetting frm = new FormPrintSetting();
+                frm.ShowDialog();
+
+                RefreshFormText(this);
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+        }
+        private void simpleButton2_Click(object sender, EventArgs e)
+        {
+            FormSmartPack frm = new FormSmartPack();
+            frm.ShowDialog(rdRoomCategory.EditValue.ToString());
+        }
+        private void simpleButton3_Click(object sender, EventArgs e)
+        {
+            Report.FormPrintLot frm = new Report.FormPrintLot();
+            frm.ShowDialog(rdRoomCategory.EditValue.ToString());
+        }
+
+        private void rdRoomCategory_EditValueChanged(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection();
+            SqlCommand cmd = new SqlCommand();
+
+            try
+            {
+
+                con.ConnectionString = STM.ConnectionStringProductEngineering;
+                con.Open();
+                cmd.Connection = con;
+
+                cmd.CommandText = string.Format(@"  declare @ComputerName varchar(50)='{0}',
+		                                                    @Category varchar(50)='{1}'
+
+                                                    if exists (SELECT [ComputerName],[Category] FROM [dbo].[AxCheckPackConfig] where computername=@ComputerName)
+                                                    begin
+	                                                    delete FROM [dbo].[AxCheckPackConfig] where computername=@ComputerName
+                                                    end
+
+                                                    insert into [dbo].[AxCheckPackConfig] ([ComputerName], [Category]) values (@ComputerName,@Category) ",
+
+                                                STM.GetComputerName, rdRoomCategory.EditValue == null || rdRoomCategory.EditValue.ToString().Trim() == "" ? "ห้องครัว" : rdRoomCategory.EditValue.ToString());
+                cmd.ExecuteNonQuery();
+
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+    }
+}

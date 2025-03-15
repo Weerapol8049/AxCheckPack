@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace AxCheckPack.Report
+{
+    public partial class FormPrintLot : DevExpress.XtraBars.Ribbon.RibbonForm
+    {
+        string RoomCategory = "ห้องครัว";
+        public FormPrintLot()
+        {
+            InitializeComponent();
+        }
+
+        public void ShowDialog(string RoomCategory)
+        {
+            this.RoomCategory = RoomCategory;
+            this.Text += " " + RoomCategory;
+            this.ShowDialog();
+        }
+
+        private void FormPrintLot_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+
+                PrinterSetting printsetting = STM.Print;
+                barFull.EditValue = printsetting.PrintFullActive;
+                barLabel.EditValue = printsetting.PrintLabelActive;
+
+
+                DataTable dt = STM.QueryData(@"select distinct STMLOTIDSTM,PROJID,PROJNAME,CREATEDDATETIME
+                                                from dbo.STMSMARTPDPARTSTM
+                                                where DateDiff(DAY,CREATEDDATETIME,getdate()) <= 200
+                                                order by CREATEDDATETIME desc,STMLOTIDSTM,PROJID,PROJNAME ");
+                repositoryItemGridLookUpEdit1.DataSource = dt;
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void barEditItem1_EditValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                STM.SplashScreenManagerManual_Show();
+
+                if (barEditItem1.EditValue != null)
+                {
+                    string Lot = barEditItem1.EditValue.ToString();
+                    string sql = string.Format(@"
+                                select	distinct CONVERT(bit,0) as chk,
+		                                STMLOTIDSTM,
+		                                SHELFNO,
+		                                PRODUCTARTICLE,
+		                                CODEPACK,
+		                                case when len(CODEPACK)>=13 then SUBSTRING(CODEPACK,1,13) else CODEPACK end as OrderNumber,
+		                                STMBUILDNOJIS,
+		                                STMFLOORNOJIS,
+                                        STMROOMNOJIS,
+		                                PRODUCTQUANTITYSEQUENCETOTAL,
+		                                case when isnull(PACKQUANTITYSEQUENCE,'')='' then '1/1' else PACKQUANTITYSEQUENCE end as PACKQUANTITYSEQUENCETOTAL
+                                from dbo.STMSMARTPDPARTSTM
+                                where STMLOTIDSTM='{0}'
+                                order by SHELFNO,PACKQUANTITYSEQUENCETOTAL ", Lot);
+                    DataTable dt = STM.QueryData(sql);
+
+                    gridControl1.DataSource = dt;
+                    gridView1.BestFitColumns();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void barButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            try
+            {
+                PrinterSetting printsetting = STM.Print;
+                STM.SplashScreenManagerManual_Show();
+                gridView1.PostEditor();
+
+                if (gridControl1.DataSource == null) return;
+
+                var chk = from r in (gridControl1.DataSource as DataTable).AsEnumerable()
+                          where Convert.ToBoolean(r["chk"]) == true
+                          select r;
+
+                if (chk.Count() > 0)
+                {
+
+                    if (STM.MessageBoxConfirm("Confirm Print")) return;
+
+                    Report.FormFull frm = new Report.FormFull();
+
+                    foreach (DataRow row in chk.ToArray())
+                    {
+                        if (Convert.ToBoolean(barFull.EditValue) == true)
+                        {
+                            frm.ShowDialog(row["STMLOTIDSTM"].ToString(), row["CODEPACK"].ToString(), RoomCategory, PrintType.Full, DateTime.Now);
+                        }
+                        if (Convert.ToBoolean(barLabel.EditValue) == true)
+                        {
+                            frm.ShowDialog(row["STMLOTIDSTM"].ToString(), row["CODEPACK"].ToString(), RoomCategory, PrintType.Label, DateTime.Now);
+                        }
+                    }
+
+                    STM.MessageBoxInformation("Complete");
+                }
+                else
+                {
+                    STM.MessageBoxError("ไม่พบข้อมูล");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                STM.MessageBoxError(ex);
+            }
+            finally
+            {
+                STM.SplashScreenManagerManual_Hide();
+            }
+        }
+
+        private void gridView1_RowCountChanged(object sender, EventArgs e)
+        {
+            textEdit1.Text = gridView1.RowCount.ToString("#,##0");
+        }
+
+        private void checkEdit1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (gridControl1.DataSource != null)
+            {
+                foreach (DataRow row in (gridControl1.DataSource as DataTable).Rows)
+                {
+                    row["chk"] = checkEdit1.Checked;
+                }
+            }
+        }
+
+
+    }
+}

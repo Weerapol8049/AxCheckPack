@@ -1,0 +1,163 @@
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\Resources\beepNotFound.wav
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\Microsoft.Dynamics.AX.ManagedInterop.dll
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\OnBarcode.Barcode.WinForms.dll
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\zxing.dll
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\zxing.presentation.dll
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormMessageBox.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormNoLot.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Form1.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormPrintSetting.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormSmartPack.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormViewPack.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Properties.Resources.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Report.FormFull.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Report.FormPrintLot.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.SplashScreen1.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.csproj.GenerateResource.cache
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormNoCopy.resources
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack_Test.exe.config
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack_Test.exe.manifest
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack_Test.application
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack_Test.exe
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack_Test.pdb
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack_Test.exe.licenses
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack_Test.TrustInfo.xml
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack_Test.exe.manifest
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack_Test.application
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack_Test.exe
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack_Test.pdb
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.csprojResolveAssemblyReference.cache
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\RdlCompile.cache
+C:\Users\1011405\source\repos\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\RdlCompile.compiled
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\Resources\beepNotFound.wav
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\Microsoft.Dynamics.AX.ManagedInterop.dll
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\OnBarcode.Barcode.WinForms.dll
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\zxing.dll
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\zxing.presentation.dll
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.csprojResolveAssemblyReference.cache
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormMessageBox.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormNoCopy.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormNoLot.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Form1.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormPrintSetting.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormSmartPack.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormViewPack.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Properties.Resources.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Report.FormFull.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.Report.FormPrintLot.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.SplashScreen1.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.csproj.GenerateResource.Cache
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\RdlCompile.cache
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\RdlCompile.compiled
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.FormAdmin.resources
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack.exe.config
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack.exe.manifest
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack.application
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack.exe
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\bin\Debug\AxCheckPack.pdb
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.exe.licenses
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.TrustInfo.xml
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.exe.manifest
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.application
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.exe
+C:\Line production\AxCheckPack_Old_v1\AxCheckPack\obj\Debug\AxCheckPack.pdb
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack.exe.config
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.exe
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.pdb
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\Resources\beepNotFound.wav
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack.exe.manifest
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack.application
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack.exe
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack.pdb
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\Microsoft.Dynamics.AX.ManagedInterop.dll
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\OnBarcode.Barcode.WinForms.dll
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\zxing.dll
+C:\Line production\AxCheckPack_BackData\AxCheckPack\bin\Debug\zxing.presentation.dll
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.csprojResolveAssemblyReference.cache
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormAdmin.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormMessageBox.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormNoCopy.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormNoLot.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Form1.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormPrintSetting.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormSmartPack.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormViewPack.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Properties.Resources.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormFull.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormPrintLot.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.SplashScreen1.resources
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.csproj.GenerateResource.Cache
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.exe.licenses
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\RdlCompile.cache
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\RdlCompile.compiled
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.TrustInfo.xml
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.exe.manifest
+C:\Line production\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.application
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\Resources\beepNotFound.wav
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\OnBarcode.Barcode.WinForms.dll
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\zxing.dll
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\zxing.presentation.dll
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormAdmin.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormMessageBox.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormNoCopy.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormNoLot.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Form1.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormPrintSetting.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormSmartPack.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormViewPack.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Properties.Resources.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormFull.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormPrintLot.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.SplashScreen1.resources
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.csproj.GenerateResource.Cache
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\RdlCompile.cache
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\RdlCompile.compiled
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\Microsoft.Dynamics.AX.ManagedInterop.dll
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.csprojResolveAssemblyReference.cache
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.exe.config
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.exe.manifest
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.application
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.exe
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.pdb
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.exe.licenses
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.TrustInfo.xml
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.exe.manifest
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.application
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.exe
+C:\Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.pdb
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\Resources\beepNotFound.wav
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\Microsoft.Dynamics.AX.ManagedInterop.dll
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\OnBarcode.Barcode.WinForms.dll
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\zxing.dll
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\zxing.presentation.dll
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormAdmin.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormMessageBox.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormNoCopy.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormNoLot.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Form1.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormPrintSetting.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormSmartPack.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormViewPack.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Properties.Resources.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormFull.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormPrintLot.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.SplashScreen1.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.csproj.GenerateResource.Cache
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\RdlCompile.cache
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\RdlCompile.compiled
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.csprojResolveAssemblyReference.cache
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormStatusRemark.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormPreviewPDLot.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.Report.FormAdminExc.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack.FormInputBlocker.resources
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.exe.config
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.exe.manifest
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.application
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.exe
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\bin\Debug\AxCheckPack_Test.pdb
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.exe.licenses
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.TrustInfo.xml
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.exe.manifest
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.application
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.exe
+C:\3. Line production\BackData\AxCheckPack_BackData\AxCheckPack\obj\Debug\AxCheckPack_Test.pdb
