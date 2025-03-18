@@ -52,6 +52,7 @@
             this.gridColumn1 = new DevExpress.XtraGrid.Columns.GridColumn();
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.gridColumn4 = new DevExpress.XtraGrid.Columns.GridColumn();
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
@@ -199,6 +200,7 @@
             this.gridColumnLock,
             this.gridColumn2,
             this.gridColumn3,
+            this.gridColumn4,
             this.gridColumn1});
             this.gridView1.GridControl = this.gridControl1;
             this.gridView1.Name = "gridView1";
@@ -281,7 +283,7 @@
             // 
             this.gridColumn1.Name = "gridColumn1";
             this.gridColumn1.Visible = true;
-            this.gridColumn1.VisibleIndex = 5;
+            this.gridColumn1.VisibleIndex = 6;
             this.gridColumn1.Width = 260;
             // 
             // layoutControlGroup1
@@ -303,6 +305,18 @@
             this.layoutControlItem1.Size = new System.Drawing.Size(723, 378);
             this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem1.TextVisible = false;
+            // 
+            // gridColumn4
+            // 
+            this.gridColumn4.AppearanceHeader.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold);
+            this.gridColumn4.AppearanceHeader.Options.UseFont = true;
+            this.gridColumn4.AppearanceHeader.Options.UseTextOptions = true;
+            this.gridColumn4.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
+            this.gridColumn4.Caption = "Lock Scan";
+            this.gridColumn4.FieldName = "LockScan";
+            this.gridColumn4.Name = "gridColumn4";
+            this.gridColumn4.Visible = true;
+            this.gridColumn4.VisibleIndex = 5;
             // 
             // FormNoCopy
             // 
@@ -353,6 +367,7 @@
         private DevExpress.XtraGrid.Columns.GridColumn gridColumn3;
         private DevExpress.XtraBars.BarButtonItem btnInputBlocker;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup4;
+        private DevExpress.XtraGrid.Columns.GridColumn gridColumn4;
 
     }
 }

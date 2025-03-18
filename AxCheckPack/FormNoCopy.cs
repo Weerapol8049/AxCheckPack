@@ -41,7 +41,8 @@ namespace AxCheckPack
 	                                        Name, 
 	                                        cast(LOCK as bit) Lock, 
 	                                        cast(LOCKPRINTPACK as bit) LockPrintPack,  
-	                                        cast(CODEPART as bit) CodePart  
+	                                        cast(CODEPART as bit) CodePart,
+                                            cast(LOCKSCAN as bit) LockScan    
                                         from dbo.STMROOMCATEGORY  order by SEQ");
             DataTable dt = STM.QueryData(sql);
 
@@ -103,13 +104,14 @@ namespace AxCheckPack
                 foreach (DataRow row in dt.Rows)
                 {
                     cmd.CommandText = string.Format(@"UPDATE dbo.STMROOMCATEGORY
-                                                        SET LOCK = @LOCK, LOCKPRINTPACK = @LOCKPRINTPACK, CODEPART = @CODEPART
+                                                        SET LOCK = @LOCK, LOCKPRINTPACK = @LOCKPRINTPACK, CODEPART = @CODEPART, LOCKSCAN = @LOCKSCAN
                                                         WHERE NAME = @NAME");
                     cmd.Parameters.Clear();
                     cmd.Parameters.Add(new SqlParameter("NAME", row["NAME"].ToString()));
                     cmd.Parameters.Add(new SqlParameter("LOCK", row["LOCK"]));
                     cmd.Parameters.Add(new SqlParameter("CODEPART", row["CODEPART"]));
                     cmd.Parameters.Add(new SqlParameter("LOCKPRINTPACK", row["LOCKPRINTPACK"]));
+                    cmd.Parameters.Add(new SqlParameter("LOCKSCAN", row["LOCKSCAN"]));
                     cmd.ExecuteNonQuery();
                 }
 

@@ -266,7 +266,7 @@ namespace AxCheckPack
                         timerClearScan.Enabled = true;
 
                         string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());//PD66000025774-PD02PT01
-                        //string filteredBarcode = "PD66000025774-49659_1";
+                        //string filteredBarcode = "PD68000017467-16388";
 
                         FormScan(filteredBarcode);
 
@@ -322,7 +322,7 @@ namespace AxCheckPack
                         //                        }
                         #endregion
 
-                        if (status_copy == 0)//WK#1.n 20230526
+                        //if (status_copy == 0)//WK#1.n 20230526
                         {
                             //                            string sql = string.Format(@"
                             //                                                                select ROOMCATEGORY, STMLOTIDSTM, OrderNumber,RECID, BARCODE, PRODUCTARTICLE, PARTNAME, CODEPART, FINISHLENGTH, FINISHWIDTH, CODEPACK, SHELFNO, CHECKPART,CHECKPACK, CHECKPACKDATE, CHECKPACKUSER, ITEMID
@@ -356,21 +356,33 @@ namespace AxCheckPack
                                 RoomCategoryLock = dtCodePack.Rows[0]["ROOMCATEGORY"].ToString();
                                 rdRoomCategory.EditValue = RoomCategoryLock;
 
-                                if (admin == 0 && !string.IsNullOrEmpty(RoomCategoryLock))
-                                    status_copy = STM.LockSetting(2, RoomCategoryLock);
+                                int hideCodePack = 0;
+                                int blockScan = 0;
+                                DataTable dtLock = STM.LockSetting(RoomCategoryLock);
 
-                                int hideCodePack = STM.LockSetting(3, RoomCategoryLock);
+                                foreach (DataRow row in dtLock.Rows)
+	                            {
+                                    if (admin == 0)
+                                        status_copy = Convert.ToInt32(row["Lock"]);
+
+                                    hideCodePack = Convert.ToInt32(row["CodePart"]);
+                                    blockScan = Convert.ToInt32(row["LockScan"]);
+	                            }
+
+                                //if (admin == 0 && !string.IsNullOrEmpty(RoomCategoryLock))
+                                //    status_copy = STM.LockSetting(2, RoomCategoryLock);
+                                //int hideCodePack = STM.LockSetting(3, RoomCategoryLock);
 
                                 if (admin == 0 && hideCodePack == 1)
-                                {
-                                    txtScan.Properties.ReadOnly = true;
                                     gridColumn20.Visible = false;// CodePart
-                                }
                                 else
-                                {
-                                    txtScan.Properties.ReadOnly = false;
                                     gridColumn20.Visible = true;// CodePart
-                                }
+                                
+
+                                if (blockScan > 0)
+                                    txtScan.Properties.ReadOnly = true;
+                                else
+                                    txtScan.Properties.ReadOnly = false;
                                     
                             }
                         }
@@ -473,22 +485,20 @@ namespace AxCheckPack
                     }
                     else
                     {
-                        if (status_copy == 1)//WK#1.n 20230526 ล็อค check pick pack part
-                        {
-                            STM.MessageBoxError(string.Format(" Barcode {0} ยังไม่ผ่าน Check Part ", barcode));
-                        }
-                        else
-                        {
-                            STM.MessageBoxError(string.Format(" ไม่พบข้อมูล OrderNumber '{0}' ", barcode));
+                        //if (status_copy == 1)//WK#1.n 20230526 ล็อค check pick pack part
+                        //{
+                        //    STM.MessageBoxError(string.Format(" Barcode {0} ยังไม่ผ่าน Check Part ", barcode));
+                        //}
+                        //else
+                        //{
+                            //STM.MessageBoxError(string.Format(" ไม่พบข้อมูล OrderNumber '{0}' ", barcode));
                             notifyIcon1.BalloonTipText = string.Format(" ไม่พบข้อมูล Code Part '{0}' ", barcode);
                             notifyIcon1.ShowBalloonTip(5000);
 
-                            spError.Play();
-                        }
-
-
+                            if (STM.GetComputerName != "STMM-IT-N-06-PC")
+                                spError.Play();
+                        //}
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -862,26 +872,35 @@ namespace AxCheckPack
         //WK#1.n 20230419
         private void LockPrintPack(bool lockScan = false)
         {
-            int hideCodePack = STM.LockSetting(3, rdRoomCategory.EditValue.ToString().Trim());
-            status_copy = STM.LockSetting(2, rdRoomCategory.EditValue.ToString().Trim());
+            int hideCodePack = 0;
+            int blockScan = 0;
+            int blockPrint = 0;
+            DataTable dtLock = STM.LockSetting(rdRoomCategory.EditValue.ToString().Trim());
 
-            if ((admin == 0 && hideCodePack == 1) || lockScan)
+            foreach (DataRow row in dtLock.Rows)
             {
+                status_copy = Convert.ToInt32(row["Lock"]);
+                blockPrint = Convert.ToInt32(row["LockPrintPack"]);
+                hideCodePack = Convert.ToInt32(row["CodePart"]);
+                blockScan = Convert.ToInt32(row["LockScan"]);
+            }
+
+            if (blockScan > 0 || lockScan)
                 txtScan.Properties.ReadOnly = true;
-
-                gridColumn20.Visible = false;// CodePart
-            }
             else
-            {
                 txtScan.Properties.ReadOnly = false;
+                                    
+            //int hideCodePack = STM.LockSetting(3, rdRoomCategory.EditValue.ToString().Trim());
+            //status_copy = STM.LockSetting(2, rdRoomCategory.EditValue.ToString().Trim());
 
+            if (admin == 0 && hideCodePack == 1)
+                gridColumn20.Visible = false;// CodePart
+            else
                 gridColumn20.Visible = true;// CodePart
-            }
-                
-
+            
             gridView1.RefreshEditor(false);
 
-            if (admin == 0 && STM.LockSetting(1, rdRoomCategory.EditValue.ToString().Trim()) == 1)
+            if (admin == 0 && blockPrint == 1)
                 layoutControlItem4.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;//Print Pack
             else
                 layoutControlItem4.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;//Print Pack
@@ -1077,19 +1096,32 @@ namespace AxCheckPack
         //WK#1.n 20210921
         public void gridView1_ShowingEditor(object sender, CancelEventArgs e)
         {
-            int hideCodePart = STM.LockSetting(3, RoomCategoryLock);
-            status_copy = STM.LockSetting(2, RoomCategoryLock);
+            //int hideCodePart = STM.LockSetting(3, RoomCategoryLock);
+            //status_copy = STM.LockSetting(2, RoomCategoryLock);
+
+            int hideCodePart = 0;
+            int blockScan = 0;
+
+            DataTable dtLock = STM.LockSetting(RoomCategoryLock);
+
+            foreach (DataRow row in dtLock.Rows)
+            {
+                status_copy = Convert.ToInt32(row["Lock"]);
+                hideCodePart = Convert.ToInt32(row["CodePart"]);
+                blockScan = Convert.ToInt32(row["LockScan"]);
+            }
+
+            if (blockScan > 0)
+                txtScan.Properties.ReadOnly = true;
+            else
+                txtScan.Properties.ReadOnly = false;
 
             if (admin == 0 && hideCodePart == 1)
             {
-                txtScan.Properties.ReadOnly = true;
-
                 gridColumn20.Visible = false;// CodePart
             }
             else
             {
-                txtScan.Properties.ReadOnly = false;
-
                 gridColumn20.Visible = true;// CodePart
             }
 

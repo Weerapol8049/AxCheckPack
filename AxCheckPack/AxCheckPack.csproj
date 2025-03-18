@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AxCheckPack</RootNamespace>
-    <AssemblyName>AxCheckPack_Test</AssemblyName>
+    <AssemblyName>AxCheckPack</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>Svn</SccProjectName>
@@ -17,7 +17,7 @@
     <SccProvider>SubversionScc</SccProvider>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>\\10.11.0.6\c%24\inetpub\wwwroot\AxCheckPack_Test\</PublishUrl>
+    <PublishUrl>\\10.11.0.6\c%24\inetpub\wwwroot\AxCheckPack\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -27,12 +27,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://10.11.0.6/AxCheckPack_Test/</InstallUrl>
-    <UpdateUrl>http://10.11.0.6/AxCheckPack_Test/</UpdateUrl>
+    <InstallUrl>http://10.11.0.6/AxCheckPack/</InstallUrl>
+    <UpdateUrl>http://10.11.0.6/AxCheckPack/</UpdateUrl>
     <PublisherName>starmark</PublisherName>
     <MinimumRequiredVersion>1.0.1.9</MinimumRequiredVersion>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>161</ApplicationRevision>
+    <ApplicationRevision>166</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

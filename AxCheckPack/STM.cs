@@ -306,8 +306,8 @@ namespace AxCheckPack
         {
             get
             {
-                string table_name = "[dbo].[STMSMARTPDPARTBACKDATA]";
-                //string table_name = "[dbo].[STMSMARTPDPARTSTM]";
+                //string table_name = "[dbo].[STMSMARTPDPARTBACKDATA]";
+                string table_name = "[dbo].[STMSMARTPDPARTSTM]";
                 return table_name;
             }
         }
@@ -507,7 +507,7 @@ namespace AxCheckPack
         {
             int _lock = 0;
 
-            DataTable dtLock = STM.QueryData(string.Format(@"select Lock, LockPrintPack, CodePart, Name from dbo.STMROOMCATEGORY WHERE NAME = '{0}'  order by SEQ ", category));
+            DataTable dtLock = STM.QueryData(string.Format(@"select Lock, LockPrintPack, CodePart, LockScan, Name from dbo.STMROOMCATEGORY WHERE NAME = '{0}'  order by SEQ ", category));
             foreach (DataRow row in dtLock.Rows)
             {
                 if (function == 1)
@@ -522,9 +522,19 @@ namespace AxCheckPack
                 {
                     _lock = Convert.ToInt32(row["CodePart"]);
                 }
+                else if (function == 4)
+                {
+                    _lock = Convert.ToInt32(row["LockScan"]);
+                }
             }
 
             return _lock;
+        }
+
+        public static DataTable LockSetting(string category)
+        {
+            DataTable dtLock = STM.QueryData(string.Format(@"select Lock, LockPrintPack, CodePart, LockScan, Name from dbo.STMROOMCATEGORY WHERE NAME = '{0}'  order by SEQ ", category));
+            return dtLock;
         }
     }
 }

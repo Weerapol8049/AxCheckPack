@@ -220,18 +220,37 @@ namespace AxCheckPack
                         STMLOTIDSTM = dt.Rows[0]["STMLOTIDSTM"].ToString();
                         RoomCategoryLock = dt.Rows[0]["ROOMCATEGORY"].ToString();
 
-                        status_copy = STM.LockSetting(2, RoomCategoryLock);
+                        //status_copy = STM.LockSetting(2, RoomCategoryLock);
+                        //int hideCodePart = STM.LockSetting(3, RoomCategoryLock);
 
-                        int hideCodePart = STM.LockSetting(3, RoomCategoryLock);
+                        int hideCodePart = 0;
+                        int blockScan = 0;
+                        DataTable dtLock = STM.LockSetting(RoomCategoryLock);
+
+                        foreach (DataRow row in dtLock.Rows)
+                        {
+                            if (admin == 0)
+                                status_copy = Convert.ToInt32(row["Lock"]);
+
+                            hideCodePart = Convert.ToInt32(row["CodePart"]);
+                            blockScan = Convert.ToInt32(row["LockScan"]);
+                        }
+
+                        //if (admin == 0 && !string.IsNullOrEmpty(RoomCategoryLock))
+                        //    status_copy = STM.LockSetting(2, RoomCategoryLock);
+                        //int hideCodePack = STM.LockSetting(3, RoomCategoryLock);
+
+                        if (blockScan > 0)
+                            txtScan.Properties.ReadOnly = true;
+                        else
+                            txtScan.Properties.ReadOnly = false;
 
                         if (admin == 0 && hideCodePart == 1)
                         {
-                            txtScan.Properties.ReadOnly = true;
                             gridColumn3.Visible = false;//CodePart
                         }
                         else
                         {
-                            txtScan.Properties.ReadOnly = false;
                             gridColumn3.Visible = true;//CodePart
                         }
 
@@ -986,19 +1005,35 @@ namespace AxCheckPack
         //WK#1.n 20230223
         private void gridViewAll_ShowingEditor(object sender, CancelEventArgs e)
         {
-            int hideCodePart = STM.LockSetting(3, RoomCategoryLock);
-            status_copy = STM.LockSetting(2, RoomCategoryLock);
+            //int hideCodePart = STM.LockSetting(3, RoomCategoryLock);
+            //status_copy = STM.LockSetting(2, RoomCategoryLock);
+            int hideCodePart = 0;
+            int blockScan = 0;
+            int blockPrint = 0;
+
+            DataTable dtLock = STM.LockSetting(RoomCategoryLock);
+
+            foreach (DataRow row in dtLock.Rows)
+            {
+                status_copy = Convert.ToInt32(row["Lock"]);
+                blockPrint = Convert.ToInt32(row["LockPrintPack"]);
+                hideCodePart = Convert.ToInt32(row["CodePart"]);
+                blockScan = Convert.ToInt32(row["LockScan"]);
+            }
 
             if (admin == 0 && hideCodePart == 1)
             {
-                txtScan.Properties.ReadOnly = true;
                 gridColumn3.Visible = false;//CodePart
             }
             else
             {
-                txtScan.Properties.ReadOnly = false;
                 gridColumn3.Visible = true;//CodePart
             }
+
+            if (blockScan == 1)
+                txtScan.Properties.ReadOnly = true;
+            else
+                txtScan.Properties.ReadOnly = false;
 
             if (admin == 0 && status_copy == 1)
             {
