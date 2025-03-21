@@ -39,6 +39,8 @@ namespace AxCheckPack
         int status_copy = 0;
         int timeClear = 3; //WK#1.n 20230519
         int admin = 0;
+        private const int scannerThreshold = 90;
+        private bool isScannerInput = false;
         //IntPtr _hookID = IntPtr.Zero;//WK#1.n 20250220
 
         public FormNoLot()
@@ -50,7 +52,7 @@ namespace AxCheckPack
                 InitializeComponent();
 
                 this.KeyPreview = true; // อนุญาตให้ฟอร์มดักจับเหตุการณ์คีย์บอร์ด
-                this.KeyPress += new KeyPressEventHandler(FormNoLot_KeyPress);
+                //this.KeyPress += new KeyPressEventHandler(FormNoLot_KeyPress);
 
             }
             catch (Exception ex)
@@ -62,6 +64,59 @@ namespace AxCheckPack
                 STM.SplashScreenManagerManual_Hide();
             }
         }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            // เริ่มจับเวลาหากยังไม่ได้เริ่ม
+            if (!stopwatch.IsRunning)
+            {
+                stopwatch.Start();
+                isScannerInput = true;
+            }
+
+            // ตรวจสอบว่าเป็นอักขระพิมพ์ได้ (ตัวเลข/ตัวอักษร)
+            //if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.Z)
+            //{
+            //    scannedData.Append((char)e.KeyValue);
+            //    e.SuppressKeyPress = true; // บล็อกการป้อนจากคีย์บอร์ด
+            //}
+
+            scannedData.Append((char)e.KeyValue);
+            e.SuppressKeyPress = true; // บล็อกการป้อนจากคีย์บอร์ด
+
+            if (e.KeyCode == Keys.Enter) // จบการสแกนเมื่อ Enter ถูกกด
+            {
+                stopwatch.Stop();
+                long tim = stopwatch.ElapsedMilliseconds;
+                if (
+                    stopwatch.ElapsedMilliseconds < 200 || //Dongle
+                    (stopwatch.ElapsedMilliseconds > 1100 && stopwatch.ElapsedMilliseconds < 1300) //USB
+                   ) // ถ้าพิมพ์เร็วมาก แสดงว่าเป็นเครื่องสแกน
+                {
+                    if (scannedData.ToString() != "")
+                    {
+                        timerClearScan.Enabled = false;
+                        timerClearScan.Enabled = true;
+
+                        scannedData.Replace((char)Keys.OemMinus, '-');
+                        scannedData.Replace((char)Keys.ShiftKey, '*');
+                        scannedData.Replace((char)Keys.Enter, '#');
+                        scannedData.Replace("*-", "_");
+                        scannedData.Replace("*", "");
+                        scannedData.Replace("#", "");
+
+                        FormScan(scannedData.ToString());
+
+                        //MessageBox.Show("Barcode Scanned: " + scannedData.ToString() + " :: " + barcode + " :: " + tim, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                scannedData.Clear();
+                stopwatch.Reset();
+            }
+
+            base.OnKeyDown(e);
+        }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -245,42 +300,74 @@ namespace AxCheckPack
 
         private void FormNoLot_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (txtScan.Properties.ReadOnly)
-            {
-                if (!stopwatch.IsRunning || stopwatch.ElapsedMilliseconds > 65)
-                {
-                    // หากระยะเวลาระหว่าง KeyPress เกิน 50ms แสดงว่าอาจเป็นการพิมพ์มือ
-                    string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());
+            //MessageBox.Show(e.KeyChar.ToString());
+            //if (!stopwatch.IsRunning)
+            //{
+            //    stopwatch.Start();
+            //    //scannedData.Append(e.KeyChar);
+            //}
+            //else
+            //{
+            //    stopwatch.Stop();
+            //    long elapsedTime = stopwatch.ElapsedMilliseconds;
+            //    stopwatch.Reset();
+            //    stopwatch.Start();
 
-                    //MessageBox.Show("Clear : " + filteredBarcode, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    scannedData.Clear();
-                }
+            //    if (elapsedTime < scannerThreshold) // ถ้าระยะเวลาสั้นมาก ถือว่าเป็น Scanner
+            //    {
+            //        scannedData.Append(e.KeyChar);
+            //    }
+            //    else // ถ้าช้า แสดงว่าเป็น Keyboard
+            //    {
+            //        scannedData.Clear(); // รีเซ็ตค่า
+            //    }
+            //}
 
-                stopwatch.Restart();  // รีเซ็ตเวลา
+            //if (e.KeyChar == (char)Keys.Enter) // Barcode Scanner มักจะกด Enter ต่อท้าย
+            //{
+            //    string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());
+            //    //string inputType = scannedData.Length > 5 ? "Scanner" : "Keyboard";
+            //    MessageBox.Show(filteredBarcode);
+            //    scannedData.Clear();
+            //    stopwatch.Reset();
+            //}
+        
+            //if (txtScan.Properties.ReadOnly)
+            //{
+            //    if (!stopwatch.IsRunning || stopwatch.ElapsedMilliseconds > 80)
+            //    {
+            //        // หากระยะเวลาระหว่าง KeyPress เกิน 50ms แสดงว่าอาจเป็นการพิมพ์มือ
+            //        string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());
 
-                if (e.KeyChar == (char)Keys.Enter) // เมื่อเครื่องสแกนส่ง Enter มา
-                {
-                    if (scannedData.ToString() != "")
-                    {
-                        timerClearScan.Enabled = false;
-                        timerClearScan.Enabled = true;
+            //        //MessageBox.Show("Clear : " + filteredBarcode, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //        scannedData.Clear();
+            //    }
 
-                        string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());//PD66000025774-PD02PT01
-                        //string filteredBarcode = "PD68000017467-16388";
+            //    stopwatch.Restart();  // รีเซ็ตเวลา
 
-                        FormScan(filteredBarcode);
+            //    if (e.KeyChar == (char)Keys.Enter) // เมื่อเครื่องสแกนส่ง Enter มา
+            //    {
+            //        if (scannedData.ToString() != "")
+            //        {
+            //            timerClearScan.Enabled = false;
+            //            timerClearScan.Enabled = true;
 
-                        //MessageBox.Show("Barcode Scanned: " + scannedData.ToString() + " :: " + filteredBarcode, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        scannedData.Clear(); // ล้างข้อมูลที่สะสมไว้
-                        e.Handled = true; // ป้องกัน Enter จากไปก่อผลที่อื่น
-                        stopwatch.Stop();
-                    }
-                }
-                else
-                {
-                    scannedData.Append(e.KeyChar); // สะสมค่าบาร์โค้ดที่ถูกสแกน
-                }
-            }
+            //            string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());//PD66000025774-PD02PT01
+            //            //string filteredBarcode = "PD68000017467-16388";
+
+            //            FormScan(filteredBarcode);
+
+            //            //MessageBox.Show("Barcode Scanned: " + scannedData.ToString() + " :: " + filteredBarcode, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //            scannedData.Clear(); // ล้างข้อมูลที่สะสมไว้
+            //            e.Handled = true; // ป้องกัน Enter จากไปก่อผลที่อื่น
+            //            stopwatch.Stop();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        scannedData.Append(e.KeyChar); // สะสมค่าบาร์โค้ดที่ถูกสแกน
+            //    }
+            //}
         }
 
 
@@ -1186,5 +1273,6 @@ namespace AxCheckPack
             status_copy = Convert.ToInt32(STM.QueryData_ExecuteScalar(string.Format(@"select Lock from dbo.STMROOMCATEGORY WHERE NAME = '{0}'  order by SEQ ", rdRoomCategory.EditValue.ToString())));
 
         }
+
     }
 }

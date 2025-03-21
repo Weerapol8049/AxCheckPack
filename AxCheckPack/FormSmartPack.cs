@@ -32,6 +32,7 @@ namespace AxCheckPack
 
         private Stopwatch stopwatch = new Stopwatch();
         private StringBuilder scannedData = new StringBuilder();
+        private bool isScannerInput = false;
 
         public FormSmartPack()
         {
@@ -93,6 +94,58 @@ namespace AxCheckPack
             }
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            // เริ่มจับเวลาหากยังไม่ได้เริ่ม
+            if (!stopwatch.IsRunning)
+            {
+                stopwatch.Start();
+                isScannerInput = true;
+            }
+
+            // ตรวจสอบว่าเป็นอักขระพิมพ์ได้ (ตัวเลข/ตัวอักษร)
+            //if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.Z)
+            //{
+            //    scannedData.Append((char)e.KeyValue);
+            //    e.SuppressKeyPress = true; // บล็อกการป้อนจากคีย์บอร์ด
+            //}
+
+            scannedData.Append((char)e.KeyValue);
+            e.SuppressKeyPress = true; // บล็อกการป้อนจากคีย์บอร์ด
+
+            if (e.KeyCode == Keys.Enter) // จบการสแกนเมื่อ Enter ถูกกด
+            {
+                stopwatch.Stop();
+                long tim = stopwatch.ElapsedMilliseconds;
+                if (
+                    stopwatch.ElapsedMilliseconds < 200 || //Dongle
+                    (stopwatch.ElapsedMilliseconds > 1100 && stopwatch.ElapsedMilliseconds < 1300) //USB
+                   ) // ถ้าพิมพ์เร็วมาก แสดงว่าเป็นเครื่องสแกน
+                {
+                    if (scannedData.ToString() != "")
+                    {
+                        timerClearScan.Enabled = false;
+                        timerClearScan.Enabled = true;
+
+                        scannedData.Replace((char)Keys.OemMinus, '-');
+                        scannedData.Replace((char)Keys.ShiftKey, '*');
+                        scannedData.Replace((char)Keys.Enter, '#');
+                        scannedData.Replace("*-", "_");
+                        scannedData.Replace("*", "");
+                        scannedData.Replace("#", "");
+
+                        FormScan(scannedData.ToString());
+
+                        //MessageBox.Show("Barcode Scanned: " + scannedData.ToString() + " :: " + barcode + " :: " + tim, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                scannedData.Clear();
+                stopwatch.Reset();
+            }
+
+            base.OnKeyDown(e);
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             txtScan.Focus();
@@ -110,39 +163,39 @@ namespace AxCheckPack
 
         private void FormSmartPack_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (txtScan.Properties.ReadOnly)
-            {
-                if (!stopwatch.IsRunning || stopwatch.ElapsedMilliseconds > 65)
-                {
-                    // หากระยะเวลาระหว่าง KeyPress เกิน 50ms แสดงว่าอาจเป็นการพิมพ์มือ
-                    string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());
+            //if (txtScan.Properties.ReadOnly)
+            //{
+            //    if (!stopwatch.IsRunning || stopwatch.ElapsedMilliseconds > 80)
+            //    {
+            //        // หากระยะเวลาระหว่าง KeyPress เกิน 50ms แสดงว่าอาจเป็นการพิมพ์มือ
+            //        string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());
 
-                    //MessageBox.Show("Clear : " + filteredBarcode, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    scannedData.Clear();
-                }
+            //        //MessageBox.Show("Clear : " + filteredBarcode, "Scan Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //        scannedData.Clear();
+            //    }
 
-                stopwatch.Restart();  // รีเซ็ตเวลา
+            //    stopwatch.Restart();  // รีเซ็ตเวลา
 
-                if (e.KeyChar == (char)Keys.Enter) // เมื่อเครื่องสแกนส่ง Enter มา
-                {
-                    if (scannedData.ToString() != "")
-                    {
-                        //timerClearScan.Enabled = false;
-                        //timerClearScan.Enabled = true;
+            //    if (e.KeyChar == (char)Keys.Enter) // เมื่อเครื่องสแกนส่ง Enter มา
+            //    {
+            //        if (scannedData.ToString() != "")
+            //        {
+            //            //timerClearScan.Enabled = false;
+            //            //timerClearScan.Enabled = true;
 
-                        string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());//PD66000025774-PD02PT01
-                        FormScan(filteredBarcode);
+            //            string filteredBarcode = RemoveOddIndexCharacters(scannedData.ToString());//PD66000025774-PD02PT01
+            //            FormScan(filteredBarcode);
 
-                        scannedData.Clear(); // ล้างข้อมูลที่สะสมไว้
-                        e.Handled = true; // ป้องกัน Enter จากไปก่อผลที่อื่น
-                        stopwatch.Stop();
-                    }
-                }
-                else
-                {
-                    scannedData.Append(e.KeyChar); // สะสมค่าบาร์โค้ดที่ถูกสแกน
-                }
-            }
+            //            scannedData.Clear(); // ล้างข้อมูลที่สะสมไว้
+            //            e.Handled = true; // ป้องกัน Enter จากไปก่อผลที่อื่น
+            //            stopwatch.Stop();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        scannedData.Append(e.KeyChar); // สะสมค่าบาร์โค้ดที่ถูกสแกน
+            //    }
+            //}
         }
 
         //WK#1.n 20250313
